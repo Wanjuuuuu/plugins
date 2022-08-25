@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -76,8 +77,21 @@ class _MyHomePageState extends State<MyHomePage> {
       await controller.initialize();
       await controller.setLooping(true);
       await controller.play();
+
+      _saveFileIntoMedia(file);
       setState(() {});
     }
+  }
+
+  Future<void> _saveFileIntoMedia(XFile? file) async {
+    if (file == null) {
+      return;
+    }
+    final File tmpFile = File(file.path);
+    final Directory path = await getApplicationDocumentsDirectory();
+    final File newFile = await tmpFile.copy('${path.path}/${tmpFile.path}');
+
+    debugPrint('WANN: ${newFile.path}');
   }
 
   Future<void> _onImageButtonPressed(ImageSource source,

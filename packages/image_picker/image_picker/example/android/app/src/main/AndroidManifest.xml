@@ -2,6 +2,7 @@
     package="io.flutter.plugins.imagepickerexample">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application android:label="Image Picker Example" android:icon="@mipmap/ic_launcher">
         <activity android:name="io.flutter.embedding.android.FlutterActivity"
