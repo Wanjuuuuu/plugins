@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
 void main() {
   runApp(const MyApp());
@@ -89,20 +90,22 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    final Directory? path = await getExternalStorageDirectory();
-    if (path == null) {
-      return;
-    }
-    debugPrint('[WAN] ${path.path}');
+    // final List<Directory>? paths =
+    //     await getExternalStorageDirectories(type: StorageDirectory.movies);
+    // if (paths == null || paths.isEmpty) {
+    //   return;
+    // }
+    // debugPrint('[WAN] ${paths}');
 
-    final File tmpFile = File(file.path);
-    final String filePath = '${path.path}/${basename(tmpFile.path)}';
-    await tmpFile.copy(filePath);
+    // final File tmpFile = File(file.path);
+    // final String filePath = '${paths[0].path}/${basename(tmpFile.path)}';
+    // await tmpFile.copy(filePath);
+
+    await GallerySaver.saveVideo(file.path);
 
     debugPrint('[WAN] ===========================');
     debugPrint("[WAN] start saving file into media : ");
     debugPrint('[WAN] ${file.path}');
-    debugPrint('[WAN] -> $filePath');
     debugPrint('[WAN] ===========================');
   }
 
