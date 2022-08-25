@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 
 void main() {
   runApp(const MyApp());
@@ -78,20 +79,31 @@ class _MyHomePageState extends State<MyHomePage> {
       await controller.setLooping(true);
       await controller.play();
 
-      _saveFileIntoMedia(file);
       setState(() {});
     }
   }
 
+// 위치를 picker.pick 밑으로 내리고 async 하게 가자..
   Future<void> _saveFileIntoMedia(XFile? file) async {
     if (file == null) {
       return;
     }
-    final File tmpFile = File(file.path);
-    final Directory path = await getApplicationDocumentsDirectory();
-    final File newFile = await tmpFile.copy('${path.path}/${tmpFile.path}');
 
-    debugPrint('WANN: ${newFile.path}');
+    final Directory? path = await getExternalStorageDirectory();
+    if (path == null) {
+      return;
+    }
+    debugPrint('[WAN] ${path.path}');
+
+    final File tmpFile = File(file.path);
+    final String filePath = '${path.path}/${basename(tmpFile.path)}';
+    await tmpFile.copy(filePath);
+
+    debugPrint('[WAN] ===========================');
+    debugPrint("[WAN] start saving file into media : ");
+    debugPrint('[WAN] ${file.path}');
+    debugPrint('[WAN] -> $filePath');
+    debugPrint('[WAN] ===========================');
   }
 
   Future<void> _onImageButtonPressed(ImageSource source,
@@ -102,6 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (isVideo) {
       final XFile? file = await _picker.pickVideo(
           source: source, maxDuration: const Duration(seconds: 10));
+
+      await _saveFileIntoMedia(file);
+
       await _playVideo(file);
     } else if (isMultiImage) {
       await _displayPickImageDialog(context!,
